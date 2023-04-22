@@ -1,10 +1,10 @@
 from twitchAPI.twitch import Twitch
 from twitchAPI.helper import limit
 import tomllib
-import os
+import json
 import asyncio
 import time
-import csv
+#import csv
 import datetime
 
 #https://pytwitchapi.readthedocs.io/en/stable/index.html
@@ -14,36 +14,38 @@ with open('./config.toml', 'rb') as f:
 app_id = config['ids']['app_id']
 app_secret = config['ids']['app_secret']
 
-
-
+datadict = {}
 
 async def get_streams(): 
     #rippa twitch live channels
     twitch = await Twitch(app_id, app_secret) 
-    async for stream in twitch.get_streams(stream_type='live'):
+    #lobal datadict
+    async for stream in twitch.get_streams(stream_type='live', game_id=["511224"]):
         #yielda stream sem async stream
-        yield stream
+            yield stream
         
-
-    
-
-async def write_to_csv():
+async def write_to_json():
     start_time = time.perf_counter()
-    #keyra get_stream() 
     streams = get_streams()
-    #búa til og opna csv file
+    #print(datadict)
     timecheck = datetime.datetime.now()
     formattime = timecheck.strftime("%d-%m-%Y_%H-%M")
-    with open('Streymendur/streymendur/'+'twitch_'+formattime+'.csv', mode='w', encoding="utf-8", errors='ignore') as file:        
-        writer = csv.writer(file)
-        #búa til raðir
-        writer.writerow(['User Id', 'User Name', 'Game', 'Tags'])
-        #breyta úr async stream object í str
+    with open('./Streymendur/'+'twitch_'+formattime+'.json', mode='w', encoding="utf-8", errors='ignore') as file:
         async for stream in streams:
-            writer.writerow([stream.user_id, stream.user_name, stream.game_name, stream.tags])
-            
+            #from async stream to dict to json
+            jsonread = {
+                 stream.id: {
+                 'user_name':stream.user_login,
+                 'viewers':stream.viewer_count,
+                 'game':stream.game_name,
+                 'tags':stream.tags
+                 }
+            }
+            writer = json.dumps(jsonread, indent=4, ensure_ascii=False)
+            file.write(writer)    
     end_time = time.perf_counter()
     timetook = end_time-start_time
     print (f"Took {timetook/60:0.2f}mins")
-asyncio.run(write_to_csv())
+
+asyncio.run(write_to_json())
 
