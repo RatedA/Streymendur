@@ -1,14 +1,19 @@
 from twitchAPI.twitch import Twitch
 from twitchAPI.helper import limit
+import tomllib
+import os
 import asyncio
 import time
 import csv
 import datetime
-#twitchAPI.helper import first limit
+
 #https://pytwitchapi.readthedocs.io/en/stable/index.html
-app_id = 'mk861jwh10u4x9m6mp0x862b457cxh'
-app_secret = '2mjouwif6knma8fo65rtkykyyq9t52'
-#twitch = await Twitch(app_id, app_secret, target_app_auth_scope=[AuthScope.USER_EDIT])
+with open('./config.toml', 'rb') as f:
+    config = tomllib.load(f)
+
+app_id = config['ids']['app_id']
+app_secret = config['ids']['app_secret']
+
 
 
 
