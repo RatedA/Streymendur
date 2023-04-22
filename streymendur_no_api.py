@@ -3,16 +3,16 @@ import csv
 import asyncio
 #import json
 
-#app_id = 'mk861jwh10u4x9m6mp0x862b457cxh'
-#app_secret = 'q2d77wx8acmge96pyaqatb257evpa6'
+#app_id = ''
+#app_secret = ''
 #gamelist = ['489136']
 
 streamURL = "https://api.twitch.tv/helix/streams/" #?first=100&stream_type=live"
 searchURL = "https://api.twitch.tv/helix/search/channels?query=iceland&live_only=true"
 gameURL = "https://api.twitch.tv/helix/games/top/?first=100"
 authURL = 'https://id.twitch.tv/oauth2/token'
-Client_ID = 'mk861jwh10u4x9m6mp0x862b457cxh'
-Secret  = 'q2d77wx8acmge96pyaqatb257evpa6'
+Client_ID = ''
+Secret  = ''
 
 AutParams = {'client_id': Client_ID,
              'client_secret': Secret,
