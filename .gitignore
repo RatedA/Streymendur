@@ -1,4 +1,3 @@
 config.toml
 tests/**
 data/**
-datadude.py
