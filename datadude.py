@@ -2,10 +2,10 @@ from twitchAPI import Twitch
 import asyncio
 import json
 import os
-import tomllib
+import tomli
 
 with open('./config.toml', 'rb') as f:
-    config = tomllib.load(f)
+    config = tomli.load(f)
 
 app_id = config['ids']['app_id']
 app_secret = config['ids']['app_secret']
@@ -24,7 +24,6 @@ for entry in os.scandir(dirpath):
         if mod_time > latest_time:
             latest_file = dirpath+entry.name
             latest_time = mod_time
-
 
 
 def update_user_file(user_file, new_user_file):
@@ -54,11 +53,15 @@ async def check_users(read_ids):
     user_ids = read_ids("data/users/user.json")    
     twitch = await Twitch(app_id, app_secret) 
     dumpdict = {}
-    async for stream in twitch.get_streams(user_id=user_ids):
-        if stream.type == "live":
-            updated_user = {stream.user_login:{"stream_id":stream.user_id, "game":stream.game_name, "type":stream.type, "viewers":stream.viewer_count, "tags":stream.tags, "time":stream.started_at, "title":stream.title}}
-            print(updated_user)
-            dumpdict.update(updated_user)
+    with open('./data/users/user_live.json', mode='w', encoding="utf-8", errors='ignore') as file:
+        async for stream in twitch.get_streams(user_id=user_ids):
+            if stream.type == "live":
+                updated_user = {stream.user_login:{"stream_id":stream.user_id, "game":stream.game_name, "type":stream.type, "viewers":stream.viewer_count, "tags":stream.tags, "title":stream.title}}
+            #print(updated_user)
+                dumpdict.update(updated_user)
+        writer = json.dumps(dumpdict, ensure_ascii=False, indent=4, sort_keys=True,)
+        file.write(writer)    
+    
 
 asyncio.run(check_users(read_ids))
 

@@ -1,6 +1,6 @@
 from twitchAPI.twitch import Twitch
 from twitchAPI.helper import limit
-import tomllib
+import tomli
 import json
 import asyncio
 import time
@@ -14,7 +14,7 @@ import datetime
 #https://pytwitchapi.readthedocs.io/en/stable/index.html
  
 with open('./config.toml', 'rb') as f:
-    config = tomllib.load(f)
+    config = tomli.load(f)
 
 app_id = config['ids']['app_id']
 app_secret = config['ids']['app_secret']
@@ -52,5 +52,14 @@ async def write_to_json():
     timetook = end_time-start_time
     print (f"Took {timetook/60:0.2f}mins")
 
-asyncio.run(write_to_json())
 
+#async def main():
+#    while True:
+#        await write_to_json()
+#        await asyncio.sleep(3600)  # wait 1 hour before running write_to_json again
+#        await update_user_file()
+#        for i in range(12):  # run check_users 12 times, every 5 minutes
+#            await asyncio.sleep(300)
+#            await check_users()
+
+asyncio.run(write_to_json())
