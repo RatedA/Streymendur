@@ -3,6 +3,7 @@ import asyncio
 import json
 import os
 import tomli
+import datetime
 
 with open('./config.toml', 'rb') as f:
     config = tomli.load(f)
@@ -41,6 +42,7 @@ def update_user_file(user_file, new_user_file):
 
 
 def read_ids(user_file):
+    update_user_file(user_file, latest_file)
     user_id = []
     with open (user_file, 'r') as f:
         data = json.load(f)
@@ -53,11 +55,18 @@ async def check_users(read_ids):
     user_ids = read_ids("data/users/user.json")    
     twitch = await Twitch(app_id, app_secret) 
     dumpdict = {}
+    time_now = datetime.datetime.now()
     with open('./data/users/user_live.json', mode='w', encoding="utf-8", errors='ignore') as file:
         async for stream in twitch.get_streams(user_id=user_ids):
             if stream.type == "live":
-                updated_user = {stream.user_login:{"stream_id":stream.user_id, "game":stream.game_name, "type":stream.type, "viewers":stream.viewer_count, "tags":stream.tags, "title":stream.title}}
-            #print(updated_user)
+                live_time = stream.started_at.replace(tzinfo=None)
+                #makes time in hours:min instead of days,hours:mins
+                delta = time_now.replace(microsecond=0,) - live_time
+                deltasec = int(delta.total_seconds())
+                hours, remaining_seconds = divmod(deltasec, 3600)
+                minutes, _ = divmod(remaining_seconds, 60)
+                uptime = f'{hours}:{minutes}'
+                updated_user = {stream.user_login:{"stream_id":stream.user_id, "game":stream.game_name, "type":stream.type, "viewers":stream.viewer_count, "tags":stream.tags, "title":stream.title,"live_since":str(live_time),"live_for":uptime}}
                 dumpdict.update(updated_user)
         writer = json.dumps(dumpdict, ensure_ascii=False, indent=4, sort_keys=True,)
         file.write(writer)    
@@ -65,6 +74,3 @@ async def check_users(read_ids):
 
 asyncio.run(check_users(read_ids))
 
-
-
-#update_user_file("data/users/user.json", latest_file)
