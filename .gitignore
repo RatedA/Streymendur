@@ -2,3 +2,5 @@ config.toml
 tests/**
 data/**
 __pycache__/**
+data.py
+userdata.py

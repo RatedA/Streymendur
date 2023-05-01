@@ -53,13 +53,4 @@ async def write_to_json():
     print (f"Took {timetook/60:0.2f}mins")
 
 
-#async def main():
-#    while True:
-#        await write_to_json()
-#        await asyncio.sleep(3600)  # wait 1 hour before running write_to_json again
-#        await update_user_file()
-#        for i in range(12):  # run check_users 12 times, every 5 minutes
-#            await asyncio.sleep(300)
-#            await check_users()
-
 asyncio.run(write_to_json())
