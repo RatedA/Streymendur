@@ -82,7 +82,8 @@ async def check_users(read_ids):
             updated_user = {stream.user_login:{"stream_id":stream.user_id, "game":stream.game_name, "type":stream.type, "viewers":stream.viewer_count, "tags":stream.tags, "title":stream.title,"live_since":str(live_time),"live_for":uptime,"timestamp":timestamp}}
             dumpdict.update(updated_user)
         writer = json.dumps(dumpdict, ensure_ascii=False, indent=4, sort_keys=True,)
-        file.write(writer)    
+        file.write(writer)
+    addUserData()    
 
 
 
